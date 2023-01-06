@@ -79,15 +79,17 @@ public class EmployeeController {
         log.info("新增员工，员工信息：{}",employee.toString());
         //设置初始密码，需要使用MD5加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+
         //设置创建时间
-        employee.setCreateTime(LocalDateTime.now());
+        //employee.setCreateTime(LocalDateTime.now());
         //设置更新时间
-        employee.setUpdateTime(LocalDateTime.now());
+        //employee.setUpdateTime(LocalDateTime.now());
         //设置创建人(获取当前登录用户的id)
-        Long empId = (Long)request.getSession().getAttribute("employee");
-        employee.setCreateUser(empId);
+        //Long empId = (Long)request.getSession().getAttribute("employee");
+        //employee.setCreateUser(empId);
         //设置修改人(获取当前登录用户的id)
-        employee.setUpdateUser(empId);
+        //employee.setUpdateUser(empId);
 
         //在数据库创建管理员用户
         employeeService.save(employee);
@@ -96,7 +98,7 @@ public class EmployeeController {
     }
 
     /**
-     * 查询所有员工你
+     * 查询所有员工
      */
     @GetMapping("/page")
     public R<Page> page(Integer page, Integer pageSize,String name){
@@ -115,5 +117,46 @@ public class EmployeeController {
         employeeService.page(pageInfo,queryWrapper);
         //4.返回结果集
         return R.success(pageInfo);
+    }
+
+    /**
+     * 更新账户状态(禁用/启用)
+     * @param employee
+     * @param request
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody Employee employee,HttpServletRequest request){
+        log.info(employee.toString());
+
+        //1.设置更新时间
+        //employee.setUpdateTime(LocalDateTime.now());
+
+        //2.设置更新此账户状态的用户
+        //Long empId = (Long) request.getSession().getAttribute("employee");
+        //employee.setUpdateUser(empId);
+
+
+
+        //3.执行更新
+        employeeService.updateById(employee);
+
+        //4.返回成功信息
+        return R.success("员工信息修改成功");
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<Employee> add(@PathVariable Long id){
+        log.info("根据id查询员工信息...");
+        Employee employee = employeeService.getById(id);
+        if (employee != null){
+            return R.success(employee);
+        }
+        return R.error("没有查询到对应员工信息");
     }
 }

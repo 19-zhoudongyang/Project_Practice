@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * 进行文件上传和下载
@@ -29,14 +30,34 @@ public class CommonController {
      */
     @PostMapping("/upload")
     public R<String> upload(MultipartFile file){
-        log.info(file.toString());
+
+
+        //获取原始文件名
+        String originalFilename = file.getOriginalFilename();
+
+        //切割文件名后缀
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        //使用UUID重新生成文件名，防止文件名重复导致文件被覆盖
+        String fileName = UUID.randomUUID().toString()+suffix;
+
+        log.info(fileName);
+        log.info(basePath);
+
+        //创建一个目录对象
+        File dir = new File(basePath);
+        //判断当前目录是否存在
+        if (!dir.exists()) {
+            //目录不存在就创建目录
+            dir.mkdirs();
+        }
 
         //转存图片
         try {
-            file.transferTo(new File(basePath+"hellp.jpg"));
+            file.transferTo(new File(basePath+fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return R.success("");
+        return R.success(fileName);
     }
 }

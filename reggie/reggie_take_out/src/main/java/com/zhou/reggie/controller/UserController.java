@@ -63,6 +63,7 @@ public class UserController {
                 user.setPhone(phone);
                 userService.save(user);
             }
+            session.setAttribute("user",user);
             return R.success(user);
         }
         return R.error("登录失败");

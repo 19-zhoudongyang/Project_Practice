@@ -23,15 +23,24 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info("公共字段自动填充[insert]...");
         log.info(metaObject.toString());
 
-        log.info("创建此数据的用户为{}",BaseContext.getCurrent());
+        log.info("创建此数据的用户为{}",BaseContext.getCurrentId());
+
 
         //自动填充创建此数据的时间和创建此数据的账户
-        metaObject.setValue("createTime",LocalDateTime.now());
-        metaObject.setValue("createUser",BaseContext.getCurrent());
-        //自动填充更新此数据的时间和更新此数据的账户
-        metaObject.setValue("updateTime",LocalDateTime.now());
-        metaObject.setValue("updateUser",BaseContext.getCurrent());
+        if (metaObject.hasSetter("createTime")){
+            metaObject.setValue("createTime",LocalDateTime.now());
+        }
+        if (metaObject.hasSetter("createUser")){
+            metaObject.setValue("createUser",BaseContext.getCurrentId());
+        }
 
+        //自动填充更新此数据的时间和更新此数据的账户
+        if (metaObject.hasSetter("updateTime")){
+            metaObject.setValue("updateTime",LocalDateTime.now());
+        }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        }
     }
 
     /**
@@ -43,10 +52,14 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info("公共字段自动填充[update]...");
         log.info(metaObject.toString());
 
-        log.info("更新此数据的用户为{}",BaseContext.getCurrent());
+        log.info("更新此数据的用户为{}",BaseContext.getCurrentId());
 
         //自动填充更新此数据的时间和更新此数据的账户
-        metaObject.setValue("updateTime",LocalDateTime.now());
-        metaObject.setValue("updateUser",BaseContext.getCurrent());
+        if (metaObject.hasSetter("updateTime")){
+            metaObject.setValue("updateTime",LocalDateTime.now());
+        }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        }
     }
 }

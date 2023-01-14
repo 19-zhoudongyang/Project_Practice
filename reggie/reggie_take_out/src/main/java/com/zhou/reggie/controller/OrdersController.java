@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/order")
 @Slf4j
 public class OrdersController {
 
@@ -26,6 +26,6 @@ public class OrdersController {
     @PostMapping("/submit")
     public R<String> submit(@RequestBody Orders orders){
         ordersService.submit(orders);
-        return null;
+        return R.success("下单成功");
     }
 }

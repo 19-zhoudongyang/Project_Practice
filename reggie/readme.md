@@ -134,7 +134,12 @@
     - [2.在Linux中安装maven](#2在linux中安装maven)
     - [3.编写Shell脚本(拉取代码、编译、打包、启动)](#3编写shell脚本拉取代码编译打包启动)
     - [4.为用户授权执行Shell脚本的权限](#4为用户授权执行shell脚本的权限)
-    - [5.执行Shell脚本](#5执行shell脚本)
+    - [5.设置静态IP](#5设置静态ip)
+    - [6.执行Shell脚本](#6执行shell脚本)
+- [使用Redis](#使用redis)
+  - [在java中使用Redis](#在java中使用redis)
+    - [依赖](#依赖)
+    - [yml配置项](#yml配置项)
 
 <!-- /code_chunk_output -->
 
@@ -461,12 +466,83 @@
 >>>![1](/pic/135.png)
 ---
 ### 2.在Linux中安装maven
+>>>![1](/pic/136.png)
 ---
 ### 3.编写Shell脚本(拉取代码、编译、打包、启动)
+>>>![1](/pic/137.png)
+>>>   #!/bin/sh
+>>>   echo =============================================
+>>>   echo  自动化部署脚本启动
+>>>   echo =============================================
+>>>   echo 停止原来运行中的工程
+>>>   APP_NAME=reggie_take_out
+>>>   tpid=`ps -ef|grep $APP_NAME|grep -v grep|grep -v kill|awk '{print $2}'`
+>>>   if [ ${tpid} ]; then
+>>>          echo 'Stop Process...'
+>>>          kill -15 $tpid
+>>>   fi
+>>>   sleep 2
+>>>   tpid=`ps -ef|grep $APP_NAME|grep -v grep|grep -v kill|awk '{print $2}'`
+>>>   if [ ${tpid} ]; then
+>>>           echo 'Kill Process!'
+>>>           kill -9 $tpid
+>>>   else
+>>>           echo 'Stop Success!'
+>>>   fi
+>>>   echo 准备从Git仓库拉去最新代码
+>>>   cd /usr/local/Project_Practice
+>>>   echo 开始从Git仓库拉取最新代码
+>>>   git pull
+>>>   echo 代码拉取完成
+>>>   cd /usr/local/Project_Practice/reggie/reggie_take_out
+>>>   echo 开始打包
+>>>   output=`mvn clean package -Dmaven.test.skip=true`
+>>>   cd target
+>>>   echo 启动项目
+>>>   nohup java -jar reggie_take_out-1.0-SNAPSHOT.jar &> reggie_take_out-1.0-SNAPSHOT.log &
+>>>   echo 项目启动完成
 ---
 ### 4.为用户授权执行Shell脚本的权限
+>>>![1](/pic/138.png)
+>>>![1](/pic/139.png)
 ---
-### 5.执行Shell脚本
+### 5.设置静态IP
+>>>![1](/pic/140.png)
+>>>![1](/pic/141.png)
+---
+### 6.执行Shell脚本
+>>>![1](/pic/142.png)
 ---
 ---
 ---
+# 使用Redis
+## 在java中使用Redis
+>>>![1](/pic/143.png)
+>>>![1](/pic/144.png)
+>>>![1](/pic/145.png)
+>>>![1](/pic/146.png)
+### 依赖
+>>>     <!--Jedis依赖-->
+>>>     <dependency>
+>>>         <groupId>redis.clients</groupId>
+>>>         <artifactId>jedis</artifactId>
+>>>         <version>3.3.0</version>
+>>>     </dependency>
+>>>     <!--Spring Data Redis依赖，简化Redis操作-->
+>>>     <dependency>
+>>>         <groupId>org.springframework.boot</groupId>
+>>>         <artifactId>spring-boot-starter-data-redis</artifactId>
+>>>     </dependency>
+### yml配置项
+>>>     #Redis相关配置
+>>>     redis:
+>>>       host: 192.168.201.100
+>>>       port: 6379
+>>>       #password:
+>>>       database: 0 #操作0号数据库
+>>>       jedis:
+>>>         pool:
+>>>           max-active: 8 #最大连接数
+>>>           max-wait: 1ms #连接池最大阻塞等待时间
+>>>           max-idle: 4 #连接池中的最大空闲连接
+>>>           min-idle: 0 #连接池中的最小空闲连接

@@ -139,7 +139,28 @@
 - [使用Redis](#使用redis)
   - [在java中使用Redis](#在java中使用redis)
     - [依赖](#依赖)
-    - [yml配置项](#yml配置项)
+    - [yml配置项(如果有Spring配置项，需挂在Spring配置项下)](#yml配置项如果有spring配置项需挂在spring配置项下)
+    - [使用RedisTemplate操作Redis](#使用redistemplate操作redis)
+      - [注意：此接口封装了特殊的序列化规则，如果想在命令行窗口里获取该key的值，需要重新设置序列化规则，以确保key值不改变(添加一个SpringBoot配置类)](#注意此接口封装了特殊的序列化规则如果想在命令行窗口里获取该key的值需要重新设置序列化规则以确保key值不改变添加一个springboot配置类)
+- [缓存优化](#缓存优化)
+  - [问题说明](#问题说明)
+  - [环境搭建](#环境搭建)
+    - [maven坐标(Redis依赖)](#maven坐标redis依赖)
+    - [配置文件](#配置文件)
+    - [配置类(设置序列化规则)](#配置类设置序列化规则)
+  - [缓存短信验证码](#缓存短信验证码)
+    - [实现思路](#实现思路)
+    - [代码改造](#代码改造)
+    - [功能测试](#功能测试-8)
+  - [缓存菜品数据](#缓存菜品数据)
+    - [实现思路](#实现思路-1)
+    - [代码改造](#代码改造-1)
+    - [功能测试](#功能测试-9)
+  - [Spring Cache](#spring-cache)
+    - [介绍](#介绍)
+    - [常用注解](#常用注解)
+    - [使用方式](#使用方式)
+  - [缓存套餐数据](#缓存套餐数据)
 
 <!-- /code_chunk_output -->
 
@@ -533,7 +554,10 @@
 >>>         <groupId>org.springframework.boot</groupId>
 >>>         <artifactId>spring-boot-starter-data-redis</artifactId>
 >>>     </dependency>
-### yml配置项
+---
+### yml配置项(如果有Spring配置项，需挂在Spring配置项下)
+>>>![1](/pic/147.png)
+>>>
 >>>     #Redis相关配置
 >>>     redis:
 >>>       host: 192.168.201.100
@@ -546,3 +570,89 @@
 >>>           max-wait: 1ms #连接池最大阻塞等待时间
 >>>           max-idle: 4 #连接池中的最大空闲连接
 >>>           min-idle: 0 #连接池中的最小空闲连接
+---
+### 使用RedisTemplate操作Redis
+>>>![1](/pic/148.png)
+#### 注意：此接口封装了特殊的序列化规则，如果想在命令行窗口里获取该key的值，需要重新设置序列化规则，以确保key值不改变(添加一个SpringBoot配置类)
+>>>>      @Configuration
+>>>>      public class RedisConfig extends CachingConfigurerSupport {
+>>>>      
+>>>>          @Bean
+>>>>          public RedisTemplate<Object,Object> redisTemplate (RedisConnectionFactory connectionFactory){
+>>>>              //默认的key序列化器为:JdkSerializationRedisSerializer
+>>>>              RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+>>>>              redisTemplate.setKeySerializer(new StringRedisSerializer());
+>>>>              redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+>>>>              redisTemplate.setConnectionFactory(connectionFactory);
+>>>>              return redisTemplate;
+>>>>          }
+>>>>      }
+---
+---
+---
+# 缓存优化
+## 问题说明
+>>![1](/pic/149.png)
+## 环境搭建
+### maven坐标(Redis依赖)
+>>>     <!--Spring Data Redis依赖，简化Redis操作-->
+>>>     <dependency>
+>>>         <groupId>org.springframework.boot</groupId>
+>>>         <artifactId>spring-boot-starter-data-redis</artifactId>
+>>>     </dependency>
+--- 
+### 配置文件
+>>>     spring:
+>>>       #Redis相关配置
+>>>       redis:
+>>>         host: 192.168.201.100
+>>>         port: 6379
+>>>         #password: 123456
+>>>         database: 0 #操作0号数据库
+---
+### 配置类(设置序列化规则)
+>>>>      @Configuration
+>>>>      public class RedisConfig extends CachingConfigurerSupport {
+>>>>      
+>>>>          @Bean
+>>>>          public RedisTemplate<Object,Object> redisTemplate (RedisConnectionFactory connectionFactory){
+>>>>              //默认的key序列化器为:JdkSerializationRedisSerializer
+>>>>              RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+>>>>              redisTemplate.setKeySerializer(new StringRedisSerializer());
+>>>>              redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+>>>>              redisTemplate.setConnectionFactory(connectionFactory);
+>>>>              return redisTemplate;
+>>>>          }
+>>>>      }
+---
+---
+## 缓存短信验证码
+### 实现思路
+>>>![1](/pic/150.png)
+---
+### 代码改造
+---
+### 功能测试
+---
+---
+## 缓存菜品数据
+### 实现思路
+>>>![1](/pic/151.png)
+---
+### 代码改造
+---
+### 功能测试
+---
+---
+## Spring Cache
+### 介绍
+---
+### 常用注解
+---
+### 使用方式
+---
+---
+## 缓存套餐数据
+---
+---
+---

@@ -165,6 +165,25 @@
     - [实现思路](#实现思路-2)
     - [代码改造](#代码改造-2)
     - [功能测试](#功能测试-10)
+- [主从复制](#主从复制)
+  - [问题说明](#问题说明-1)
+  - [mysql主从复制](#mysql主从复制)
+    - [介绍](#介绍-1)
+    - [配置](#配置)
+      - [配置主库(master)](#配置主库master)
+      - [配置从库(slave)](#配置从库slave)
+    - [测试](#测试)
+  - [读写分离案例](#读写分离案例)
+    - [背景](#背景)
+    - [Sharding-JDBC介绍](#sharding-jdbc介绍)
+      - [依赖](#依赖-1)
+    - [入门案例](#入门案例)
+      - [yml配置](#yml配置)
+    - [功能测试](#功能测试-11)
+  - [项目实现读写分离](#项目实现读写分离)
+    - [数据库环境准备](#数据库环境准备)
+    - [代码改造](#代码改造-3)
+    - [功能测试](#功能测试-12)
 
 <!-- /code_chunk_output -->
 
@@ -672,6 +691,100 @@
 >>>![1](/pic/160.png)
 >>> #### 如果Controller方法使用的定制的返回结果集类，需要注意此类无法被序列化的问题，解决需要使用此类实现序列化接口
 >>>![1](/pic/161.png)
+---
+### 功能测试
+---
+---
+---
+# 主从复制
+## 问题说明
+>>![1](/pic/162.png)
+---
+---
+## mysql主从复制
+### 介绍
+>>>![1](/pic/163.png)
+---
+### 配置
+>>>![1](/pic/164.png)
+#### 配置主库(master)
+>>>>![1](/pic/165.png)
+>>>>![1](/pic/166.png)
+>>>>![1](/pic/167.png)
+>>>>> # 注意：MySQL 8及之后版本需要先创建用户再赋予权限
+>>>>>     create user 'zhou'@'%' identified with mysql_native_password by 'Weizijierhuo0214';
+>>>>>     GRANT REPLICATION SLAVE ON *.* to 'zhou'@'%';
+>>>>![1](/pic/168.png)
+#### 配置从库(slave)
+>>>>![1](/pic/169.png)
+>>>>![1](/pic/170.png)
+>>>>![1](/pic/171.png)
+>>>>![1](/pic/172.png)
+>>>> # 
+>>>>>     change master to master_host='主库ip地址',master_user='主库设置的用户',master_password='用户密码',master_log_file='查询主库状态的File',master_log_pos=查询主库状态的Position;
+---
+### 测试
+---
+---
+## 读写分离案例 
+### 背景
+>>>![1](/pic/173.png)
+---
+### Sharding-JDBC介绍
+>>>![1](/pic/174.png)
+#### 依赖
+>>>> ### 注意:使用此依赖整合druid，依赖不能使用springboot关于druid的starter，否则项目无法启动
+>>>>      <!--Sharding-JDBC依赖-->
+>>>>      <dependency>
+>>>>          <groupId>org.apache.shardingsphere</groupId>
+>>>>          <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+>>>>          <version>4.0.0-RC1</version>
+>>>>      </dependency>
+---
+### 入门案例
+>>>![1](/pic/175.png)
+#### yml配置
+>>>>      spring:
+>>>>        #配置读写分离sharding-JDBC
+>>>>        shardingsphere:
+>>>>          datasource:
+>>>>            names: master,slave
+>>>>            #主数据源
+>>>>            master:
+>>>>              type: com.alibaba.druid.pool.DruidDataSource
+>>>>              driver-class-name: com.mysql.cj.jdbc.Driver
+>>>>              url:  jdbc:mysql://192.168.201.100:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+>>>>              username: root
+>>>>              password: Weizijierhuo0214
+>>>>            # 从数据源
+>>>>            slave:
+>>>>              type: com.alibaba.druid.pool.DruidDataSource
+>>>>              driver-class-name: com.mysql.cj.jdbc.Driver
+>>>>              url: jdbc:mysql://192.168.201.101:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+>>>>              username: root
+>>>>              password: Weizijierhuo0214
+>>>>          masterslave:
+>>>>            #读写分离配置
+>>>>            load-balance-algorithm-type: round-robin #轮询策略
+>>>>            #最终的数据源名称
+>>>>            name: dataSource
+>>>>            #主库数据源名称
+>>>>            master-data-source-name: master
+>>>>            #从库数据源名称列表
+>>>>            slave-data-source-names: slave
+>>>>          props:
+>>>>            sql:
+>>>>              show: true  #开启sql显示
+>>>>        main:
+>>>>            allow-bean-definition-overriding: true #允许bean定义覆盖
+---
+### 功能测试
+---
+---
+## 项目实现读写分离
+### 数据库环境准备
+---
+### 代码改造
 ---
 ### 功能测试
 ---

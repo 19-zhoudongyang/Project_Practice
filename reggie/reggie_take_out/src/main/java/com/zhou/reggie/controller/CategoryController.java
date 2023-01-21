@@ -91,7 +91,7 @@ public class CategoryController {
         //查询
         List<Category> list = categoryService.list(queryWrapper);
 
-        return R.success(list)  ;
+        return R.success(list);
 
     }
 }

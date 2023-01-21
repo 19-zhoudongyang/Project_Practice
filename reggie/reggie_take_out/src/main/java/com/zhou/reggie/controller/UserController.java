@@ -9,6 +9,7 @@ import com.zhou.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class UserController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
 
     @PostMapping("/sendMsg")
     public R<String> sendMsg(@RequestBody User user, HttpSession session){
@@ -56,7 +58,7 @@ public class UserController {
         //获取验证码
         String code = map.get("code").toString();
         //从Session中获取保存的验证码
-        //String codeInSession = session.getAttribute(phone).toString();
+//        String codeInSession = session.getAttribute(phone).toString();
 
         //从Redis中获取验证码
         String CodeInRedis = redisTemplate.opsForValue().get(phone).toString();
@@ -77,6 +79,7 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user);
+//            redisTemplate.opsForValue().set("user",user);
 
             //从Redis删除验证码
             redisTemplate.delete(phone);

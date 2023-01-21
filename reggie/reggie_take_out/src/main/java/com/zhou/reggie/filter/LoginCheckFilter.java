@@ -5,6 +5,8 @@ import com.zhou.reggie.common.BaseContext;
 import com.zhou.reggie.common.R;
 import com.zhou.reggie.entity.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.*;
@@ -17,6 +19,8 @@ import java.io.IOException;
 @WebFilter(filterName = "LoginCheckFilter",urlPatterns = "/*")
 public class LoginCheckFilter implements Filter {
 
+    @Autowired
+    private RedisTemplate redisTemplate;
     //使用此类将字符串进行路径比较
     //路径匹配器，支持通配符
     public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
@@ -64,10 +68,12 @@ public class LoginCheckFilter implements Filter {
 
         //4.2判断登录状态，如果已经登录，则放行(移动端)
         if(request.getSession().getAttribute("user") != null){
+//        if (redisTemplate.opsForValue().get("user") != null){
             log.info("用户已登录，用户id为{}",request.getSession().getAttribute("user"));
             log.info("当前线程为：{}",Thread.currentThread().getName());
             //获取当前登录用户的id并存到维护的ThreadLocal线程空间中去
-            User user = (User)request.getSession().getAttribute("user");
+//            User user = (User)request.getSession().getAttribute("user");
+            User user = (User)redisTemplate.opsForValue().get("user");
             BaseContext.setCurrentId(user.getId());
 
             filterChain.doFilter(request,response);

@@ -57,6 +57,6 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 reggie:
-  path: /usr/local/Project_Practice/reggie/reggie_take_out/pic
+  path: /usr/local/Project_Practice/reggie/reggie_take_out/pic/
   #E:\\Project Practice\reggie\reggie_take_out\pic\
 

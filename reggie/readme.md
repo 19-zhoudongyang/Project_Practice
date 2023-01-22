@@ -217,8 +217,16 @@
   - [Swagger](#swagger)
     - [介绍](#介绍-4)
     - [使用方式](#使用方式)
+      - [导入依赖](#导入依赖)
+      - [导入knife4j相关配置](#导入knife4j相关配置)
+      - [设置静态资源映射](#设置静态资源映射)
+      - [在LoginCheckFilter中设置不需要处理的请求路径](#在logincheckfilter中设置不需要处理的请求路径)
     - [常用注解](#常用注解-1)
   - [项目部署](#项目部署-1)
+    - [部署结构](#部署结构)
+    - [部署环境说明](#部署环境说明)
+    - [部署前端项目](#部署前端项目)
+    - [部署后端项目](#部署后端项目)
 
 <!-- /code_chunk_output -->
 
@@ -914,11 +922,73 @@
 >>>![1](/pic/201.png)
 ---
 ### 使用方式
+>>>![1](/pic/202.png)
+#### 导入依赖
+>>>>      <!--knife4j是SpringMVC集成Swagger生成API文档的增强解决方案-->
+>>>>      <dependency>
+>>>>          <groupId>com.github.xiaoymin</groupId>
+>>>>          <artifactId>knife4j-spring-boot-starter</artifactId>
+>>>>          <version>3.0.3</version>
+>>>>      </dependency>
+#### 导入knife4j相关配置
+>>>>![1](/pic/203.png)
+>>>> ##### 给SpringMVC配置类添加注解@EnableSwagger2和EnableKnife4j，并且添加以下内容
+>>>>>     @Bean
+>>>>>     public Docket createRestApi(){
+>>>>>         return new Docket(DocumentationType.SWAGGER_2)
+>>>>>                 .apiInfo(apiInfo())
+>>>>>                 .select()
+>>>>>                 .apis(RequestHandlerSelectors.basePackage("com.zhou.reggie.controller"))
+>>>>>                 .paths(PathSelectors.any())
+>>>>>                 .build();
+>>>>>     }
+>>>>> 
+>>>>>     private ApiInfo apiInfo(){
+>>>>>         return new ApiInfoBuilder()
+>>>>>                 .title("瑞吉外卖")
+>>>>>                 .version("1.0")
+>>>>>                 .description("瑞吉外卖接口文档")
+>>>>>                 .build();
+>>>>>     }
+#### 设置静态资源映射
+>>>>![1](/pic/204.png)
+>>>>>      @Slf4j
+>>>>>      @Configuration
+>>>>>      @EnableSwagger2
+>>>>>      @EnableKnife4j
+>>>>>      public class WebMvcConfig extends WebMvcConfigurationSupport {
+>>>>>          @Override
+>>>>>          protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+>>>>>              registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+>>>>>              registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+>>>>>          }
+#### 在LoginCheckFilter中设置不需要处理的请求路径
+>>>>![1](/pic/205.png)
+>>>>>     "/doc.html",
+>>>>>     "/webjars/**",
+>>>>>     "/swagger-resources",
+>>>>>     "/v2/api-docs"
 ---
 ### 常用注解
+>>>![1](/pic/206.png)
 ---
 ---
 ## 项目部署
+### 部署结构
+>>>![1](/pic/207.png)
+---
+### 部署环境说明
+>>>![1](/pic/208.png)
+---
+### 部署前端项目
+>>>![1](/pic/209.png)
+>>>![1](/pic/210.png)
+>>>![1](/pic/211.png)
+---
+### 部署后端项目
+>>>![1](/pic/212.png)
+>>>![1](/pic/213.png)
+>>>![1](/pic/214.png)
 ---
 ---
 ---

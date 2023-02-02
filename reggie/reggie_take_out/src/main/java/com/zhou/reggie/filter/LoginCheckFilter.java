@@ -76,8 +76,8 @@ public class LoginCheckFilter implements Filter {
             log.info("用户已登录，用户id为{}",request.getSession().getAttribute("user"));
             log.info("当前线程为：{}",Thread.currentThread().getName());
             //获取当前登录用户的id并存到维护的ThreadLocal线程空间中去
-//            User user = (User)request.getSession().getAttribute("user");
-            User user = (User)redisTemplate.opsForValue().get("user");
+            User user = (User)request.getSession().getAttribute("user");
+//            User user = (User)redisTemplate.opsForValue().get("user");
             BaseContext.setCurrentId(user.getId());
 
             filterChain.doFilter(request,response);
